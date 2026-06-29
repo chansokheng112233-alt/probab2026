@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ប្រូបាបថ្នាក់ទី១២ - ចាន់ សុខហេង</title>
+    
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&display=swap" rel="stylesheet">
+    
+    <!-- KaTeX for Beautiful Math Formatting -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        :root {
+            --gold-light: #F3E5AB;
+            --gold: #D4AF37;
+            --gold-dark: #aa8410;
+            --premium-black: #0d0d0d;
+            --dark-surface: #1a1a1a;
+            --white: #ffffff;
+            --success: #2ecc71;
+            --error: #e74c3c;
+        }
+
+        body {
+            font-family: 'Kantumruy Pro', sans-serif;
+            background: radial-gradient(circle at center, #1f1f1f 0%, #050505 100%);
+            color: var(--white);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(13, 13, 13, 0.95);
+            border: 2px solid var(--gold);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 15px 50px rgba(212, 175, 55, 0.15);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        h1 {
+            font-family: 'Moul', serif;
+            color: var(--gold);
+            text-align: center;
+            text-shadow: 0px 4px 10px rgba(0, 0, 0, 0.7);
+            margin-top: 0;
+            margin-bottom: 35px;
+            font-size: 1.4rem;
+            line-height: 1.8;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--gold-light);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            color: white;
+            border-radius: 12px;
+            font-family: 'Kantumruy Pro';
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+
+        /* Premium Buttons */
+        .btn {
+            background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+            color: #000000;
+            border: none;
+            padding: 16px 30px;
+            font-weight: 700;
+            border-radius: 14px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 25px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 1.1rem;
+            font-family: 'Kantumruy Pro';
+            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+            background: linear-gradient(135deg, var(--gold), var(--gold-light));
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Screens Logic */
+        #quiz-screen, #result-screen { display: none; }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-bottom: 25px;
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            color: var(--gold-light);
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar-bg {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--gold-dark), var(--gold));
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+
+        /* Question Box */
+        .question-box {
+            font-size: 1.15rem;
+            margin-bottom: 25px;
+            padding: 24px;
+            border-left: 5px solid var(--gold);
+            background: rgba(212, 175, 55, 0.05);
+            border-radius: 0 16px 16px 0;
+            line-height: 1.7;
+            box-shadow: inset 10px 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Option Grid */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            .container {
+                padding: 24px;
+            }
+        }
+
+        .option-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: white;
+            padding: 18px;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-align: left;
+            font-family: 'Kantumruy Pro';
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: var(--gold);
+            transform: translateX(4px);
+        }
+
+        /* Option statuses */
+        .option-btn.correct {
+            background: rgba(46, 204, 113, 0.2) !important;
+            border-color: var(--success) !important;
+            color: var(--success) !important;
+            font-weight: bold;
+        }
+
+        .option-btn.incorrect {
+            background: rgba(231, 76, 60, 0.2) !important;
+            border-color: var(--error) !important;
+            color: var(--error) !important;
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        .feedback-action {
+            margin-top: 25px;
+            display: none;
+            text-align: right;
+        }
+
+        .feedback-action .btn {
+            width: auto;
+            display: inline-block;
+            margin: 0;
+            padding: 12px 35px;
+        }
+
+        /* Footer Credit */
+        .footer-credit {
+            text-align: center;
+            margin-top: 35px;
+            font-size: 0.85rem;
+            color: rgba(212, 175, 55, 0.7);
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+            padding-top: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Premium Modal (Replacer for Alert) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: var(--dark-surface);
+            border: 2px solid var(--gold);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 400px;
+            width: 85%;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(212, 175, 55, 0.3);
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-text {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .modal-btn {
+            background: var(--gold);
+            color: black;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-family: 'Kantumruy Pro';
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .modal-btn:hover {
+            background: var(--gold-light);
+        }
+
+        /* Certificate Styling */
+        #certificate-wrapper {
+            background: #222;
+            padding: 10px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            overflow: auto;
+        }
+
+        #certificate {
+            background: #ffffff;
+            color: #000000;
+            padding: 50px;
+            border: 15px double var(--gold);
+            text-align: center;
+            position: relative;
+            box-sizing: border-box;
+            width: 700px;
+            margin: 0 auto;
+            box-shadow: inset 0 0 100px rgba(212, 175, 55, 0.1);
+        }
+
+        /* Traditional Ornamental Corners */
+        #certificate::before {
+            content: "❖";
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            color: var(--gold-dark);
+            font-size: 1.8rem;
+        }
+
+        #certificate::after {
+            content: "❖";
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: var(--gold-dark);
+            font-size: 1.8rem;
+        }
+
+        #certificate h2 {
+            font-family: 'Moul', serif;
+            color: var(--gold-dark);
+            margin-top: 10px;
+            margin-bottom: 25px;
+            font-size: 1.6rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .cert-info {
+            font-size: 1.15rem;
+            margin: 15px 0;
+            line-height: 2;
+        }
+
+        .cert-info strong {
+            color: #111;
+            border-bottom: 1px dotted var(--gold-dark);
+            padding: 0 8px;
+            font-weight: 700;
+        }
+
+        .score-display {
+            font-size: 3rem;
+            color: var(--gold-dark);
+            font-weight: bold;
+            margin: 25px 0;
+            font-family: 'Kantumruy Pro', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .cert-footer {
+            margin-top: 50px;
+            display: flex;
+            justify-content: flex-end;
+            text-align: right;
+            padding-right: 40px;
+        }
+
+        .cert-footer-text {
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+
+        .level-tag {
+            display: inline-block;
+            padding: 6px 16px;
+            background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+            color: black;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(212, 175, 55, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="main-container">
+    <!-- Screen 1: Information Input -->
+    <div id="start-screen">
+        <h1>ប្រូបាបថ្នាក់ទី១២ វិទ្យាសាស្ត្រសង្គម<br><span style="font-size: 1.1rem; color: #fff;">ការគណនាដោយប្រើបន្សំ និងទ្រឹស្តីប្រូបាបចម្រុះ</span></h1>
+        
+        <div class="input-group">
+            <label for="studentName">ឈ្មោះសិស្ស</label>
+            <input type="text" id="studentName" placeholder="បញ្ចូលឈ្មោះពេញរបស់អ្នក">
+        </div>
+        
+        <div class="input-group">
+            <label for="gender">ភេទ</label>
+            <select id="gender">
+                <option value="ប្រុស">ប្រុស</option>
+                <option value="ស្រី">ស្រី</option>
+            </select>
+        </div>
+        
+        <div class="input-group">
+            <label for="gradeSection">ជាសិស្សថ្នាក់ទី១២</label>
+            <select id="gradeSection">
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+            </select>
+        </div>
+        
+        <div class="input-group">
+            <label for="teacherName">គ្រូគណិតបង្រៀនរដ្ឋឈ្មោះ</label>
+            <input type="text" id="teacherName" placeholder="ឈ្មោះលោកគ្រូ / អ្នកគ្រូ">
+        </div>
+        
+        <div class="input-group">
+            <label>មកពីសាលា</label>
+            <input type="text" value="វិទ្យាល័យប៊ុនរ៉ានីហ៊ុនសែនចន្ទ្រា" readonly style="background: rgba(255,255,255,0.08); color: #bbb; border-color: rgba(212,175,55,0.2);">
+        </div>
+        
+        <button class="btn" onclick="startQuiz()">ចូលធ្វើលំហាត់</button>
+        <div class="footer-credit">រៀបរៀងដោយ៖ ចាន់ សុខហេង</div>
+    </div>
+
+    <!-- Screen 2: Quiz Area -->
+    <div id="quiz-screen">
+        <div class="progress-container">
+            <div class="progress-header">
+                <span id="level-tag" class="level-tag">កម្រិតទី ១</span>
+                <span id="progress-text">សំណួរទី 1/50</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div id="progress-bar-fill" class="progress-bar-fill"></div>
+            </div>
+        </div>
+        
+        <div class="question-box" id="question-text"></div>
+        <div class="options-grid" id="options-container"></div>
+        
+        <div class="feedback-action" id="feedback-action">
+            <button class="btn" id="next-btn" onclick="goToNextQuestion()">សំណួរទៅមុខទៀត ➜</button>
+        </div>
+        
+        <div class="footer-credit">រៀបរៀងដោយ៖ ចាន់ សុខហេង</div>
+    </div>
+
+    <!-- Screen 3: Certificate Result -->
+    <div id="result-screen">
+        <div id="certificate-wrapper">
+            <div id="certificate">
+                <h2>វិញ្ញាបនបត្របញ្ជាក់លទ្ធផល</h2>
+                
+                <div class="cert-info">សូមបញ្ជាក់ថា សិស្សឈ្មោះ៖ <strong id="resName"></strong> ភេទ៖ <strong id="resGender"></strong></div>
+                <div class="cert-info">សិស្សថ្នាក់ទី១២ ក្រុម <strong id="resClass"></strong> នៃ <strong>វិទ្យាល័យប៊ុនរ៉ានីហ៊ុនសែនចន្ទ្រា</strong></div>
+                <div class="cert-info">បង្រៀនដោយលោកគ្រូ/អ្នកគ្រូ៖ <strong id="resTeacher"></strong></div>
+                
+                <div style="margin: 25px 0; font-size: 1.1rem; line-height: 1.6;">បានបញ្ចប់ការធ្វើតេស្តស្ទង់សមត្ថភាព<br>លើកម្រងលំហាត់មេរៀន <strong style="color: var(--gold-dark);">«ប្រូបាបថ្នាក់ទី១២»</strong> ដោយជោគជ័យ</div>
+                
+                <div style="font-size: 0.9rem; color: #555; text-transform: uppercase; letter-spacing: 1px;">ទទួលបានពិន្ទុថ្នាក់ជាតិ</div>
+                <div class="score-display"><span id="resScore"></span> / 50</div>
+                
+                <div class="cert-footer">
+                    <div class="cert-footer-text">
+                        <p id="cert-date">ថ្ងៃទី......ខែ.......ឆ្នាំ២០២៦</p>
+                        <p style="font-family: 'Moul'; font-size: 0.85rem; margin-top: 5px; color: var(--gold-dark);">អ្នករៀបរៀង</p>
+                        <br><br>
+                        <p style="font-family: 'Moul'; color: var(--gold-dark); font-size: 0.9rem;">ចាន់ សុខហេង</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="btn" onclick="downloadCertificate()">ទាញយករូបភាពលទ្ធផល (PNG)</button>
+        <button class="btn" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); box-shadow: none;" onclick="location.reload()">ធ្វើឡើងវិញម្តងទៀត</button>
+    </div>
+</div>
+
+<!-- Custom Modal Box -->
+<div class="modal-overlay" id="custom-modal">
+    <div class="modal-content">
+        <div class="modal-text" id="modal-text">សូមបំពេញព័ត៌មានឱ្យបានគ្រប់គ្រាន់ជាមុនសិន!</div>
+        <button class="modal-btn" onclick="closeModal()">យល់ព្រម</button>
+    </div>
+</div>
+
+<script>
+    // --- Sound Effects Synthesizer (Web Audio API) ---
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function playBeep(type) {
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        
+        if (type === 'success') {
+            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+            osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.3);
+        } else if (type === 'error') {
+            osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
+            osc.frequency.setValueAtTime(147, audioCtx.currentTime + 0.08); // D3
+            gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.4);
+        } else if (type === 'click') {
+            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.05);
+        }
+    }
+
+    // --- ទិន្នន័យលំហាត់ ៥០ សំណួរប្លែកៗគ្នា (៥ កម្រិត ក្នុងមួយកម្រិត ១០ លំហាត់) ផ្តោតលើ «បន្សំ» ទាំងស្រុង ---
+    const questionBank = [
+        // Level 1: មូលដ្ឋានគ្រឹះ (បន្សំសាមញ្ញ - ឃ្លី, ផ្លែឈើ, បៀរ, សៀវភៅ, សិស្ស...)
+        { q: "ក្នុងប្រអប់មួយមានប៊ិចខៀវ $6$ ដើម និងប៊ិចក្រហម $4$ ដើម។ គេចាប់យកប៊ិច $3$ ដើមព្រមគ្នាដោយចៃដន្យ។ រកប្រូបាបដែលចាប់បានប៊ិចពណ៌ខៀវ $2$ និងក្រហម $1$។", options: ["$1/2$", "$3/10$", "$2/5$", "$3/5$"], correct: "$1/2$", level: 1 },
+        { q: "ក្នុងថង់មួយមានផ្លែប៉ោម $5$ ផ្លែ និងផ្លែស្វាយ $3$ ផ្លែ។ គេយកផ្លែឈើ $2$ ផ្លែព្រមគ្នាដោយចៃដន្យ។ រកប្រូបាបដែលបានផ្លែស្វាយទាំងពីរផ្លែ។", options: ["$3/28$", "$5/28$", "$1/14$", "$3/14$"], correct: "$3/28$", level: 1 },
+        { q: "គណៈកម្មការមួយមានសមាជិក $3$ នាក់ ត្រូវរើសចេញពីគ្រូគណិតវិទ្យា $4$ នាក់ និងគ្រូរូបវិទ្យា $5$ នាក់។ រកប្រូបាបដែលទទួលបានគ្រូគណិតវិទ្យា $1$ នាក់ និងគ្រូរូបវិទ្យា $2$ នាក់។", options: ["$10/21$", "$5/14$", "$2/7$", "$4/7$"], correct: "$10/21$", level: 1 },
+        { q: "ក្នុងប្រអប់មួយមានកាតលេខរៀងពី $1$ ដល់ $10$។ គេដកយកកាត $3$ សន្លឹកព្រមគ្នាដោយចៃដន្យ។ រកប្រូបាបដែលកាតទាំង $3$ សុទ្ធតែមានលេខសេស។", options: ["$1/12$", "$1/6$", "$5/12$", "$1/10$"], correct: "$1/12$", level: 1 },
+        { q: "ក្នុងធ្នើរសៀវភៅមួយមានសៀវភៅអក្សរសាស្ត្រ $4$ ក្បាល និងសៀវភៅប្រវត្តិវិទ្យា $6$ ក្បាល។ គេដកសៀវភៅ $2$ ក្បាលព្រមគ្នាដោយចៃដន្យ។ រកប្រូបាបដែលបានសៀវភៅប្រភេទខុសគ្នា។", options: ["$8/15$", "$7/15$", "$4/15$", "$2/5$"], correct: "$8/15$", level: 1 },
+        { q: "ក្នុងថង់មួយមានឃ្លី ស $5$ គ្រាប់ ខៀវ $3$ គ្រាប់ និងខ្មៅ $2$ គ្រាប់។ គេចាប់យកឃ្លី $3$ គ្រាប់ព្រមគ្នា។ រកប្រូបាបដែលចាប់បានពណ៌ខ្មៅទាំង $2$ និងពណ៌ស $1$។", options: ["$1/24$", "$1/12$", "$1/20$", "$3/40$"], correct: "$1/24$", level: 1 },
+        { q: "គេរើសសិស្សតំណាង $4$ នាក់ ចេញពីក្រុមសិស្សប្រុស $6$ នាក់ និងសិស្សស្រី $4$ នាក់។ រកប្រូបាបដែលសមាជិកទាំង $4$ នាក់ជាសិស្សប្រុសទាំងអស់។", options: ["$1/14$", "$3/14$", "$1/7$", "$2/21$"], correct: "$1/14$", level: 1 },
+        { q: "ក្នុងកន្ត្រកមានផ្កាម្លិះ $7$ ទង និងផ្កាឈូក $3$ ទង។ គេចាប់យកផ្កា $2$ ទងព្រមគ្នាដោយចៃដន្យ។ រកប្រូបាបដែលបានផ្កាម្លិះទាំងពីរទង។", options: ["$7/15$", "$8/15$", "$1/3$", "$2/5$"], correct: "$7/15$", level: 1 },
+        { q: "ក្នុងប្រអប់គ្រឿងបន្លាស់មានវីសល្អ $8$ និងវីសខូច $4$។ គេយកវីស $3$ គ្រាប់ព្រមគ្នាដោយចៃដន្យ។ រកប្រូបាបដែលបានវីសខូចទាំង $3$ គ្រាប់។", options: ["$1/55$", "$3/55$", "$1/110$", "$2/55$"], correct: "$1/55$", level: 1 },
+        { q: "ក្នុងដបមួយមានស្ករគ្រាប់រសជាតិស្ត្រប៊ឺរី $6$ គ្រាប់ និងរសជាតិក្រូច $4$ គ្រាប់។ គេយកស្ករគ្រាប់ $2$ គ្រាប់ព្រមគ្នាដោយចៃដន្យ។ រកប្រូបាបដែលបានរសជាតិដូចគ្នាទាំងពីរគ្រាប់។", options: ["$7/15$", "$8/15$", "$14/45$", "$23/45$"], correct: "$7/15$", level: 1 },
+
+        // Level 2: កម្រិតមធ្យម (យ៉ាងហោចណាស់ / យ៉ាងច្រើនបំផុត ដោយប្រើបន្សំ)
+        { q: "ក្នុងថង់មានឃ្លីស $5$ ពណ៌ស, $4$ ពណ៌ខៀវ និង $3$ ពណ៌ខ្មៅ។ គេចាប់យក $3$ ព្រមគ្នាដោយចៃដន្យ។ រកប្រូបាបដែលបានពណ៌សយ៉ាងហោចណាស់ $1$ គ្រាប់។", options: ["$37/44$", "$7/44$", "$19/22$", "$9/11$"], correct: "$37/44$", level: 2 },
+        { q: "គណៈកម្មការមួយមានសមាជិក $4$ នាក់ ត្រូវរើសចេញពីសិស្សប្រុស $6$ នាក់ និងសិស្សស្រី $5$ នាក់។ រកប្រូបាបដែលក្នុងគណៈកម្មការមានសិស្សស្រីយ៉ាងតិច $1$ នាក់។", options: ["$21/22$", "$19/22$", "$1/22$", "$17/22$"], correct: "$21/22$", level: 2 },
+        { q: "ក្នុងថង់មានឃ្លីស $5$ ពណ៌ស, $4$ ពណ៌ខៀវ និង $3$ ពណ៌ខ្មៅ។ គេចាប់យក $3$ ព្រមគ្នាដោយចៃដន្យ។ រកប្រូបាបដែលយ៉ាងច្រើនបំផុតបានពណ៌ស $1$ គ្រាប់។", options: ["$7/11$", "$5/11$", "$9/11$", "$6/11$"], correct: "$7/11$", level: 2 },
+        { q: "ក្នុងប្រអប់មានកាតលេខ $1$ ដល់ $12$។ គេចាប់យកកាត $3$ សន្លឹកព្រមគ្នា។ រកប្រូបាបដែលយ៉ាងហោចណាស់បានកាត $1$ សន្លឹកជាលេខបឋម ($2, 3, 5, 7, 11$)។", options: ["$37/44$", "$7/44$", "$19/22$", "$5/11$"], correct: "$37/44$", level: 2 },
+        { q: "ក្នុងប្រអប់មួយមានអំពូលភ្លើងល្អ $9$ គ្រឿង និងអំពូលខូច $3$ គ្រឿង។ គេដកយកអំពូល $3$ គ្រឿងព្រមគ្នាដោយចៃដន្យ។ រកប្រូបាបដែលយ៉ាងហោចណាស់មានអំពូលខូច $1$ គ្រឿង។", options: ["$34/55$", "$21/55$", "$13/55$", "$8/11$"], correct: "$34/55$", level: 2 },
+        { q: "ក្រុមការងារមួយមានបុរស $5$ នាក់ និងស្រី $5$ នាក់។ គេរើសសមាជិក $3$ នាក់ដោយចៃដន្យ។ រកប្រូបាបដែលទទួលបានបុរសយ៉ាងច្រើនបំផុត $1$ នាក់។", options: ["$1/2$", "$2/5$", "$3/5$", "$7/10$"], correct: "$1/2$", level: 2 },
+        { q: "ក្នុងធ្នើរមួយមានសៀវភៅគណិតវិទ្យា $6$ ក្បាល និងសៀវភៅអក្សរសាស្ត្រ $4$ ក្បាល។ គេដកសៀវភៅ $4$ ក្បាលព្រមគ្នាដោយចៃដន្យ។ រកប្រូបាបដែលយ៉ាងហោចណាស់បានសៀវភៅគណិតវិទ្យា $2$ ក្បាល។", options: ["$37/42$", "$5/42$", "$13/14$", "$11/14$"], correct: "$37/42$", level: 2 },
+        { q: "ក្នុងកន្ត្រកមានផ្លែស្វាយទុំ $7$ ផ្លែ និងស្វាយខ្ចី $5$ ផ្លែ។ គេយកស្វាយ $3$ ផ្លែព្រមគ្នាដោយចៃដន្យ។ រកប្រូបាបដែលយ៉ាងហោចណាស់បានផ្លែស្វាយទុំ $2$ ផ្លែ។", options: ["$7/11$", "$4/11$", "$9/22$", "$13/22$"], correct: "$7/11$", level: 2 },
+        { q: "គេរើសក្រុមតំណាង $4$ នាក់ ចេញពីគ្រូគណិតវិទ្យា $6$ នាក់ និងគ្រូរូបវិទ្យា $5$ នាក់។ រកប្រូបាបដែលក្រុមនោះមានគ្រូរូបវិទ្យាយ៉ាងច្រើនបំផុត $1$ នាក់។", options: ["$23/66$", "$13/66$", "$7/22$", "$29/66$"], correct: "$23/66$", level: 2 },
+        { q: "ក្នុងប្រអប់មានប៊ិចខៀវ $8$ ដើម និងក្រហម $4$ ដើម។ គេយកប៊ិច $4$ ដើមព្រមគ្នាដោយចៃដន្យ។ រកប្រូបាបដែលយ៉ាងហោចណាស់បានប៊ិចពណ៌ក្រហម $1$ ដើម។", options: ["$85/99$", "$14/99$", "$17/33$", "$25/33$"], correct: "$85/99$", level: 2 },
+
+        // Level 3: កម្រិតខ្ពស់ (លក្ខខណ្ឌចម្រុះ ពណ៌ដូចគ្នា ពណ៌ខុសគ្នា ផលបូកគូសេស)
+        { q: "ក្នុងថង់មួយមានឃ្លី ស $5$ គ្រាប់ ខៀវ $4$ គ្រាប់ និងខ្មៅ $3$ គ្រាប់។ គេចាប់យកឃ្លី $3$ គ្រាប់ព្រមគ្នា។ រកប្រូបាបដែលបានឃ្លីមានពណ៌ខុសៗគ្នាទាំង $3$។", options: ["$3/11$", "$4/11$", "$2/11$", "$5/11$"], correct: "$3/11$", level: 3 },
+        { q: "គណៈកម្មការ $4$ នាក់ ត្រូវរើសចេញពីប្រុស $6$ នាក់ និងស្រី $5$ នាក់។ រកប្រូបាបដែលក្នុងគណៈកម្មការមានចំនួនប្រុស 'ស្មើនឹង' ចំនួនស្រី។", options: ["$5/11$", "$4/11$", "$6/11$", "$1/2$"], correct: "$5/11$", level: 3 },
+        { q: "ក្នុងប្រអប់មានកាតលេខ $1$ ដល់ $12$។ គេចាប់យកកាត $3$ សន្លឹកព្រមគ្នា។ រកប្រូបាបដែលផលបូកលេខទាំង $3$ លើកាតជាចំនួនគូ។", options: ["$1/2$", "$5/11$", "$6/11$", "$5/12$"], correct: "$1/2$", level: 3 },
+        { q: "ក្នុងប្រអប់មានកាតលេខ $1$ ដល់ $12$។ គេចាប់យកកាត $3$ សន្លឹកព្រមគ្នា។ រកប្រូបាបដែលផលបូកលេខទាំង $3$ លើកាតជាចំនួនសេស។", options: ["$1/2$", "$5/11$", "$4/11$", "$7/12$"], correct: "$1/2$", level: 3 },
+        { q: "ក្នុងថង់មួយមានឃ្លី ស $5$ គ្រាប់ ខៀវ $4$ គ្រាប់ និងខ្មៅ $3$ គ្រាប់។ គេចាប់យកឃ្លី $3$ គ្រាប់ព្រមគ្នា។ រកប្រូបាបដែលចំនួនពណ៌ស 'ច្រើនជាង' ចំនួនពណ៌ខៀវ។", options: ["$19/44$", "$17/44$", "$21/44$", "$9/22$"], correct: "$19/44$", level: 3 },
+        { q: "គណៈកម្មការ $4$ នាក់ ត្រូវរើសចេញពីបុរស $6$ នាក់ និងនារី $5$ នាក់។ រកប្រូបាបដែលចំនួននារី 'ច្រើនជាង' ចំនួនបុរសនៅក្នុងគណៈកម្មការ។", options: ["$13/66$", "$15/66$", "$11/66$", "$7/33$"], correct: "$13/66$", level: 3 },
+        { q: "ក្នុងថង់មួយមានឃ្លី ស $5$ គ្រាប់ ខៀវ $4$ គ្រាប់ និងខ្មៅ $3$ គ្រាប់។ គេចាប់យកឃ្លី $3$ គ្រាប់ព្រមគ្នា។ រកប្រូបាបដែលចាប់បានឃ្លីមានពណ៌ដូចគ្នាទាំងអស់។", options: ["$3/44$", "$5/44$", "$1/22$", "$7/44$"], correct: "$3/44$", level: 3 },
+        { q: "ក្នុងប្រអប់មួយមានកាតលេខពី $1$ ដល់ $12$។ គេចាប់យកកាត $3$ សន្លឹកព្រមគ្នា។ រកប្រូបាបដែលផលគុណនៃលេខទាំង $3$ លើកាតជាចំនួនសេស។", options: ["$1/11$", "$2/11$", "$1/22$", "$3/11$"], correct: "$1/11$", level: 3 },
+        { q: "ក្នុងថង់មួយមានឃ្លី ស $5$ គ្រាប់ ខៀវ $4$ គ្រាប់ និងខ្មៅ $3$ គ្រាប់។ គេចាប់យកឃ្លី $3$ គ្រាប់ព្រមគ្នា។ រកប្រូបាបដែលចាប់បានឃ្លីពណ៌សផង និងពណ៌ខៀវផង (ពណ៌ខ្មៅមានឬគ្មានក៏បាន)។", options: ["$13/22$", "$11/22$", "$15/22$", "$9/22$"], correct: "$13/22$", level: 3 },
+        { q: "គណៈកម្មការ $4$ នាក់ ត្រូវរើសចេញពីបុរស $6$ នាក់ និងនារី $5$ នាក់។ រកប្រូបាបដែលគណៈកម្មការនោះមានទាំងបុរស និងនារីចូលរួម។", options: ["$31/33$", "$29/33$", "$1/33$", "$25/33$"], correct: "$31/33$", level: 3 },
+
+        // Level 4: កម្រិតសិស្សពូកែ (ករណីលើកលែង ការដកចេញ និងទីតាំងសមាជិកពិសេស)
+        { q: "ក្នុងថង់មួយមានឃ្លី ស $5$ គ្រាប់ ខៀវ $4$ គ្រាប់ និងខ្មៅ $3$ គ្រាប់។ គេចាប់យកឃ្លី $3$ គ្រាប់ព្រមគ្នា។ រកប្រូបាបដែលបានឃ្លី 'យ៉ាងច្រើន ២ ពណ៌ខុសគ្នា'។", options: ["$8/11$", "$3/11$", "$9/11$", "$7/11$"], correct: "$8/11$", level: 4 },
+        { q: "គណៈកម្មការ $4$ នាក់ ត្រូវរើសចេញពីបុរស $6$ នាក់ និងនារី $5$ នាក់។ រកប្រូបាបដែលគណៈកម្មការនោះ 'មិនមែនបុរសទាំងអស់ និងមិនមែននារីទាំងអស់'។", options: ["$31/33$", "$30/33$", "$28/33$", "$1/33$"], correct: "$31/33$", level: 4 },
+        { q: "ក្នុងប្រអប់មានកាតលេខពី $1$ ដល់ $12$។ គេចាប់យកកាត $3$ សន្លឹកព្រមគ្នា។ រកប្រូបាបដែលគ្មានកាតណាមានលេខចែកដាច់នឹង $4$ ឡើយ។", options: ["$21/55$", "$19/55$", "$11/55$", "$23/55$"], correct: "$21/55$", level: 4 },
+        { q: "ក្នុងថង់មួយមានឃ្លី ស $5$ គ្រាប់ ខៀវ $4$ គ្រាប់ និងខ្មៅ $3$ គ្រាប់។ គេចាប់យកឃ្លី $3$ គ្រាប់ព្រមគ្នា។ រកប្រូបាបដែលយ៉ាងហោចណាស់មានពណ៌ស $1$ គ្រាប់ និងពណ៌ខ្មៅ $1$ គ្រាប់។", options: ["$21/44$", "$19/44$", "$23/44$", "$11/22$"], correct: "$21/44$", level: 4 },
+        { q: "ក្នុងចំណោមបុរស $6$ នាក់ មានម្នាក់ឈ្មោះលោកគ្រូ សុខ។ គេរើសគណៈកម្មការ $4$ នាក់ចេញពីបុរស $6$ នាក់ និងនារី $5$ នាក់។ រកប្រូបាបដែលលោកគ្រូ សុខ ត្រូវបានជ្រើសរើសក្នុងគណៈកម្មការនោះ។", options: ["$4/11$", "$3/11$", "$5/11$", "$1/11$"], correct: "$4/11$", level: 4 },
+        { q: "ក្នុងប្រអប់មានកាតលេខពី $1$ ដល់ $12$។ គេចាប់យកកាត $3$ សន្លឹកព្រមគ្នា។ រកប្រូបាបដែលកាតទាំង $3$ មានលេខរៀបគ្នាជាស្វីតនព្វន្តដែលមានផលសងរួម $d=1$។", options: ["$1/22$", "$3/22$", "$1/11$", "$5/22$"], correct: "$1/22$", level: 4 },
+        { q: "ក្នុងថង់មួយមានឃ្លី ស $5$ គ្រាប់ ខៀវ $4$ គ្រាប់ និងខ្មៅ $3$ គ្រាប់។ គេចាប់យកឃ្លី $3$ គ្រាប់ព្រមគ្នា។ រកប្រូបាបដែលបានឃ្លីមិនមែនពណ៌សទាំងអស់ និងមិនមែនពណ៌ខៀវទាំងអស់។", options: ["$103/110$", "$97/110$", "$107/110$", "$1/10$"], correct: "$103/110$", level: 4 },
+        { q: "គណៈកម្មការ $4$ នាក់ ត្រូវរើសចេញពីបុរស $6$ នាក់ និងនារី $5$ នាក់។ រកប្រូបាបដែលចំនួនបុរស 'ស្មើនឹង' ចំនួននារីនៅក្នុងក្រុម។", options: ["$5/11$", "$3/11$", "$7/11$", "$1/2$"], correct: "$5/11$", level: 4 },
+        { q: "ក្នុងប្រអប់មានកាតលេខពី $1$ ដល់ $12$។ គេចាប់យកកាត $3$ សន្លឹកព្រមគ្នា។ រកប្រូបាបដែលកាតដែលមានលេខខ្ពស់បំផុតក្នុងចំណោមកាតទាំងបីស្មើនឹង $10$។", options: ["$9/55$", "$7/55$", "$11/55$", "$3/55$"], correct: "$9/55$", level: 4 },
+        { q: "ក្នុងថង់មួយមានឃ្លី ស $5$ គ្រាប់ ខៀវ $4$ គ្រាប់ និងខ្មៅ $3$ គ្រាប់។ គេចាប់យកឃ្លី $3$ គ្រាប់ព្រមគ្នា។ រកប្រូបាបដែលបានឃ្លីពណ៌ខ្មៅយ៉ាងតិច $1$ គ្រាប់ និងយ៉ាងច្រើន $2$ គ្រាប់។", options: ["$27/44$", "$25/44$", "$29/44$", "$13/22$"], correct: "$27/44$", level: 4 },
+
+        // Level 5: កម្រិតកំពូល (ប្រូបាបមានលក្ខខណ្ឌ ទ្រឹស្តីបទ Bayes និងតក្កវិទ្យាកម្រិតខ្ពស់)
+        { q: "ក្នុងថង់មួយមានឃ្លី ស $5$ គ្រាប់ ខៀវ $4$ គ្រាប់ និងខ្មៅ $3$ គ្រាប់។ គេចាប់យកឃ្លី $3$ គ្រាប់ព្រមគ្នា។ បើដឹងថា 'គ្មានពណ៌សសោះ' តើប្រូបាបដែលចាប់បានពណ៌ខៀវ $2$ និងពណ៌ខ្មៅ $1$ ស្មើនឹងប៉ុន្មាន?", options: ["$18/35$", "$12/35$", "$17/35$", "$11/35$"], correct: "$18/35$", level: 5 },
+        { q: "ក្នុងគណៈកម្មការ $4$ នាក់ ជ្រើសចេញពីបុរស $6$ នាក់ (ម្នាក់ៗមានបទពិសោធន៍ $3$ ឆ្នាំ) និងនារី $5$ នាក់ (ម្នាក់ៗមានបទពិសោធន៍ $5$ ឆ្នាំ)។ រកប្រូបាបដែលផលបូកឆ្នាំសរុបនៃបទពិសោធន៍របស់សមាជិកទាំង $4$ នាក់ ជាចំនួនគូ។", options: ["$1$", "$0$", "$1/2$", "$3/4$"], correct: "$1$", level: 5 },
+        { q: "ក្នុងប្រអប់មានកាតលេខពី $1$ ដល់ $12$។ គេដកយកកាត $3$ សន្លឹកព្រមគ្នា។ បើដឹងថាកាតទាំងបីសុទ្ធតែមានលេខសេស រកប្រូបាបដែលផលបូកលេខទាំងនោះធំជាង $15$។", options: ["$13/20$", "$7/20$", "$3/5$", "$11/20$"], correct: "$13/20$", level: 5 },
+        { q: "ក្នុងថង់មួយមានឃ្លី ស $5$ គ្រាប់ ខៀវ $4$ គ្រាប់ និងខ្មៅ $3$ គ្រាប់។ គេកំណត់ពិន្ទុឃ្លីនីមួយៗ (ស=$1$ ពិន្ទុ, ខៀវ=$2$ ពិន្ទុ, ខ្មៅ=$3$ ពិន្ទុ)។ គេចាប់យកឃ្លី $3$ គ្រាប់ព្រមគ្នា។ រកប្រូបាបដែលផលបូកពិន្ទុជាចំនួនគូ។", options: ["$29/55$", "$26/55$", "$31/55$", "$21/55$"], correct: "$29/55$", level: 5 },
+        { q: "ក្នុងចំណោមមនុស្ស $11$ នាក់ (ប្រុស $6$ ស្រី $5$) មានពីរនាក់ជាប្រធាន និងអនុប្រធាន។ គេរើសគណៈកម្មការ $4$ នាក់។ រកប្រូបាបដែលមានយ៉ាងច្រើនម្នាក់ក្នុងចំណោម (ប្រធាន និងអនុប្រធាន) ជាប់ក្នុងគណៈកម្មការ។", options: ["$49/55$", "$41/55$", "$51/55$", "$6/55$"], correct: "$49/55$", level: 5 },
+        { q: "ក្នុងប្រអប់មានកាតលេខពី $1$ ដល់ $12$។ គេកំណត់សញ្ញាកាត (លេខគូជាសញ្ញាវិជ្ជមាន $+$, លេខសេសជាសញ្ញាអវិជ្ជមាន $-$)។ គេចាប់យកកាត $3$ សន្លឹកព្រមគ្នា។ រកប្រូបាបដែលផលគុណសញ្ញានៃកាតទាំងបីចេញជាវិជ្ជមាន $(+)$។", options: ["$1/2$", "$1/3$", "$1/4$", "$1$"], correct: "$1/2$", level: 5 },
+        { q: "គណៈកម្មការ $4$ នាក់ ត្រូវរើសចេញពីបុរស $6$ នាក់ និងនារី $5$ នាក់។ បើគេដឹងថា 'គណៈកម្មការនោះមាននារីមិនលើសពី ២ នាក់' រកប្រូបាបដែលមានបុរស ៣ នាក់ក្នុងគណៈកម្មការនោះ។", options: ["$20/53$", "$15/53$", "$25/53$", "$11/53$"], correct: "$20/53$", level: 5 },
+        { q: "ក្នុងប្រអប់មានកាតលេខពី $1$ ដល់ $12$។ គេដកយកកាត $3$ សន្លឹកព្រមគ្នា។ រកប្រូបាបដែលកាតទាំងបីមិនមែនសុទ្ធតែជាលេខបឋម និងមិនមែនសុទ្ធតែជាលេខគូ។", options: ["$19/22$", "$17/22$", "$21/22$", "$15/22$"], correct: "$19/22$", level: 5 },
+        { q: "ក្នុងប្រអប់មានកាតលេខពី $1$ ដល់ $12$។ គេដកយកកាត $3$ សន្លឹកព្រមគ្នា។ រកប្រូបាបដែលផលបូកលេខទាំងបីចែកដាច់នឹង $3$។", options: ["$19/55$", "$17/55$", "$21/55$", "$11/55$"], correct: "$19/55$", level: 5 },
+        { q: "ក្នុងថង់មួយមានឃ្លី ស $5$ គ្រាប់ ខៀវ $4$ គ្រាប់ និងខ្មៅ $3$ គ្រាប់។ គេចាប់យកឃ្លី $3$ គ្រាប់ព្រមគ្នា។ រកប្រូបាបដែលចំនួនពណ៌ខៀវ 'ស្មើនឹង' ផលបូកនៃចំនួនពណ៌ស និងពណ៌ខ្មៅ។", options: ["$0$", "$1/110$", "$1/220$", "$1$"], correct: "$0$", level: 5 }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let studentInfo = {};
+    let isAnswered = false;
+
+    // Custom Modal Trigger
+    function openModal(text) {
+        document.getElementById('modal-text').innerText = text;
+        document.getElementById('custom-modal').classList.add('active');
+    }
+
+    function closeModal() {
+        playBeep('click');
+        document.getElementById('custom-modal').classList.remove('active');
+    }
+
+    function startQuiz() {
+        playBeep('click');
+        studentInfo = {
+            name: document.getElementById('studentName').value.trim(),
+            gender: document.getElementById('gender').value,
+            grade: document.getElementById('gradeSection').value,
+            teacher: document.getElementById('teacherName').value.trim()
+        };
+
+        if (!studentInfo.name || !studentInfo.teacher) {
+            openModal("សូមមេត្តាបំពេញ ឈ្មោះសិស្ស និង ឈ្មោះលោកគ្រូ/អ្នកគ្រូ ឱ្យបានគ្រប់គ្រាន់ជាមុនសិន!");
+            return;
+        }
+
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('quiz-screen').style.display = 'block';
+        showQuestion();
+    }
+
+    function showQuestion() {
+        isAnswered = false;
+        document.getElementById('feedback-action').style.display = 'none';
+        
+        const qData = questionBank[currentQuestionIndex];
+        
+        // Progress Updates
+        document.getElementById('level-tag').innerText = `កម្រិតទី ${qData.level}`;
+        document.getElementById('progress-text').innerText = `សំណួរទី ${currentQuestionIndex + 1} / 50`;
+        
+        const progressPercent = (currentQuestionIndex / questionBank.length) * 100;
+        document.getElementById('progress-bar-fill').style.width = `${progressPercent}%`;
+
+        // Render Question Text
+        const questionTextElement = document.getElementById('question-text');
+        questionTextElement.innerHTML = qData.q;
+
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = '';
+
+        // Randomize Options
+        let options = [...qData.options].sort(() => Math.random() - 0.5);
+
+        options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerHTML = `<span>${opt}</span>`;
+            btn.onclick = () => selectOption(btn, opt, qData.correct);
+            optionsContainer.appendChild(btn);
+        });
+
+        // Trigger KaTeX to render formulas beautifully
+        renderMathInElement(document.getElementById('quiz-screen'), {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false}
+            ],
+            throwOnError: false
+        });
+    }
+
+    function selectOption(selectedBtn, selectedText, correctText) {
+        if (isAnswered) return;
+        isAnswered = true;
+
+        const optionsContainer = document.getElementById('options-container');
+        const buttons = optionsContainer.getElementsByTagName('button');
+
+        if (selectedText === correctText) {
+            score++;
+            selectedBtn.classList.add('correct');
+            selectedBtn.innerHTML += ' <span>✓</span>';
+            playBeep('success');
+        } else {
+            selectedBtn.classList.add('incorrect');
+            selectedBtn.innerHTML += ' <span>✗</span>';
+            playBeep('error');
+
+            // Highlight the correct answer
+            for (let btn of buttons) {
+                if (btn.innerText.trim().replace(/\s/g, '') === correctText.replace(/\$/g, '').trim().replace(/\s/g, '')) {
+                    btn.classList.add('correct');
+                    btn.innerHTML += ' <span>✓</span>';
+                }
+            }
+        }
+
+        // Disable all option buttons
+        for (let btn of buttons) {
+            btn.disabled = true;
+        }
+
+        // Show Next Button Action
+        document.getElementById('feedback-action').style.display = 'block';
+    }
+
+    function goToNextQuestion() {
+        playBeep('click');
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questionBank.length) {
+            showQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+
+        // Update Certificate Information
+        document.getElementById('resName').innerText = studentInfo.name;
+        document.getElementById('resGender').innerText = studentInfo.gender;
+        document.getElementById('resClass').innerText = studentInfo.grade;
+        document.getElementById('resTeacher').innerText = studentInfo.teacher;
+        document.getElementById('resScore').innerText = score;
+
+        // Auto date generation
+        const today = new Date();
+        const khmerMonths = ["មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា", "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"];
+        
+        // Convert to Khmer digits helper
+        const toKhmerDigits = (num) => {
+            const khmerDigits = ["០", "១", "២", "៣", "៤", "៥", "៦", "៧", "៨", "៩"];
+            return num.toString().split('').map(x => isNaN(x) ? x : khmerDigits[parseInt(x)]).join('');
+        };
+
+        const dayStr = toKhmerDigits(today.getDate());
+        const monthStr = khmerMonths[today.getMonth()];
+        const yearStr = toKhmerDigits(today.getFullYear());
+
+        document.getElementById('cert-date').innerText = `ថ្ងៃទី${dayStr} ខែ${monthStr} ឆ្នាំ${yearStr}`;
+    }
+
+    function downloadCertificate() {
+        playBeep('click');
+        const cert = document.getElementById('certificate');
+        
+        // Set scale for high quality screenshot download
+        html2canvas(cert, {
+            scale: 2, 
+            useCORS: true,
+            logging: false,
+            backgroundColor: "#ffffff"
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = `លទ្ធផលប្រូបាប_${studentInfo.name}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+    }
+</script>
+
+</body>
+</html>
